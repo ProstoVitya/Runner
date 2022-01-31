@@ -6,9 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    private const float GroundDrag = 6f;
-    private const float AirDrag = 2f;
-    private const float PlayerHeight = 2f;
+    private const float GroundDetectionPosition = 1f;
+
+    [SerializeField] private Transform _orientation;
 
     [Header("Movement")]
     public float MovementSpeed;
@@ -21,11 +21,20 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keybinds")]
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
 
+    [Header("Drag")]
+    [SerializeField] private float _groundDrag = 6f;
+    [SerializeField] private float _airDrag = 2f;
+
     private float _verticalMovement;
     private float _horizontalMovement;
+
+    [Header("Ground Detection")]
+    [SerializeField] LayerMask _groundMask;
+    private bool _isGrounded;
+    private float _groundDistance = 0.4f;
+
     private Vector3 _moveDirection;
     private Rigidbody _rigidBody;
-    private bool _isGrounded;
 
     private void Start()
     {
@@ -35,8 +44,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        _isGrounded = Physics.Raycast(transform.position, Vector3.down, PlayerHeight / 2f + 0.1f);
-
+        _isGrounded = Physics.CheckSphere(transform.position -
+            new Vector3(0, GroundDetectionPosition, 0), _groundDistance, _groundMask);
         HandleInput();
         ControlDrag();
 
@@ -56,12 +65,12 @@ public class PlayerMovement : MonoBehaviour
         _horizontalMovement = Input.GetAxisRaw("Horizontal");
         _verticalMovement = Input.GetAxisRaw("Vertical");
 
-        _moveDirection = transform.forward * _verticalMovement + transform.right * _horizontalMovement;
+        _moveDirection = _orientation.forward * _verticalMovement + _orientation.right * _horizontalMovement;
     }
 
     private void ControlDrag()
     {
-        _rigidBody.drag = _isGrounded ? GroundDrag : AirDrag;
+        _rigidBody.drag = _isGrounded ? _groundDrag : _airDrag;
     }
 
     private void FixedUpdate()
