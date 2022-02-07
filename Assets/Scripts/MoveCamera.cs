@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MoveCamera : MonoBehaviour
 {
+    [Tooltip("The position the camera should follow")]
     [SerializeField] private Transform _cameraPosition;
 
     private void Update()

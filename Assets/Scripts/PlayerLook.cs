@@ -1,14 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(WallRun))]
 public class PlayerLook : MonoBehaviour
 {
+
+    [Tooltip("Horizontal mouse sensitivity")]
     [SerializeField] private float _xSensitivity;
+    [Tooltip("Vertical mouse sensitivity")]
     [SerializeField] private float _ySensitivity;
 
+    [Tooltip("Player view camera")]
     [SerializeField] private Transform _playerCamera;
+    [Tooltip("Oblect to track player camera orientation")]
     [SerializeField] private Transform _orientation;
+
+    private WallRun _wallRun;
 
     private float _mouseX;
     private float _mouseY;
@@ -22,12 +28,13 @@ public class PlayerLook : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        _wallRun = GetComponent<WallRun>();
     }
 
     private void Update()
     {
         HandleInput();
-        _playerCamera.transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0);
+        _playerCamera.transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, _wallRun.Tilt);
         _orientation.transform.localRotation = Quaternion.Euler(0, _yRotation, 0);
     }
 
